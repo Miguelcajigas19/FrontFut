@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tienda de Productos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .section {
+            margin: 20px 0;
+        }
+        .section h2 {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+        .product-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .product-list li {
+            padding: 5px;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .product-list li:last-child {
+            border-bottom: none;
+        }
+        .add-to-cart-btn {
+            padding: 5px 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .add-to-cart-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    <script>
+        function addToCart(productTitle, productPrice) {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            cart.push({ title: productTitle, price: productPrice });
+            localStorage.setItem('cart', JSON.stringify(cart));
+            alert(`${productTitle} ha sido agregado al carrito.`);
+        }
+
+        async function loadProducts() {
+            try {
+                const response = await fetch('http://localhost:3000/productos');
+                if (!response.ok) throw new Error('Error en la solicitud: ' + response.statusText);
+
+                const products = await response.json();
+                console.log('Productos cargados:', products);
+
+                const sections = {
+                    'Motor': document.getElementById('motor').querySelector('.product-list'),
+                    'Cuidado del Motor': document.getElementById('cuidado-del-motor').querySelector('.product-list'),
+                    'Extras': document.getElementById('extras').querySelector('.product-list')
+                };
+
+                products.forEach(product => {
+                    // Convertir product.precio a número antes de llamar a toFixed
+                    const precio = parseFloat(product.precio);
+                    if (!isNaN(precio)) {
+                        const listItem = document.createElement('li');
+                        listItem.innerHTML = `
+                            ${product.nombre} - $${precio.toFixed(2)}
+                            <button class="add-to-cart-btn" onclick="addToCart('${product.nombre}', ${precio})">Agregar al carrito</button>
+                        `;
+                        sections[product.categoria].appendChild(listItem);
+                    } else {
+                        console.error('El precio del producto no es un número:', product);
+                    }
+                });
+            } catch (error) {
+                console.error('Error cargando los productos:', error);
+            }
+        }
+
+        window.onload = loadProducts;
+    </script>
+</head>
+<body>
+    <header>
+        <h1>Tienda de Productos</h1>
+    </header>
+    <main>
+        <div class="section" id="motor">
+            <h2>Motor</h2>
+            <ul class="product-list"></ul>
+        </div>
+        <div class="section" id="cuidado-del-motor">
+            <h2>Cuidado del Motor</h2>
+            <ul class="product-list"></ul>
+        </div>
+        <div class="section" id="extras">
+            <h2>Extras</h2>
+            <ul class="product-list"></ul>
+        </div>
+    </main>
+</body>
+</html>

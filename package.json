@@ -1,0 +1,13 @@
+{
+  "name": "paginaweb-main",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node my-webapp/server.js --host 0.0.0.0",
+    "build": "echo 'No build step necessary'"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "pg": "^8.11.5"
+  }
+}

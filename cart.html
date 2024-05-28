@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shopping Cart</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    table, th, td {
+      border: 1px solid black;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <h1>Shopping Cart</h1>
+  <table id="cart-table">
+    <thead>
+      <tr>
+        <th>Product</th>
+        <th>Price</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+
+    </tbody>
+  </table>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+      const cartTableBody = document.querySelector('#cart-table tbody');
+
+
+      cart.forEach(function(product, index) {
+        const row = document.createElement('tr');
+        const cellTitle = document.createElement('td');
+        const cellPrice = document.createElement('td');
+        const cellAction = document.createElement('td');
+
+        cellTitle.textContent = product.title;
+        cellPrice.textContent = product.price;
+
+        const removeButton = document.createElement('button');
+        removeButton.textContent = 'Remove';
+        removeButton.addEventListener('click', function() {
+          cart.splice(index, 1);
+          localStorage.setItem('cart', JSON.stringify(cart));
+         
+          cartTableBody.removeChild(row);
+        });
+
+        cellAction.appendChild(removeButton);
+
+        row.appendChild(cellTitle);
+        row.appendChild(cellPrice);
+        row.appendChild(cellAction);
+
+        cartTableBody.appendChild(row);
+      });
+    });
+  </script>
+</body>
+</html>
